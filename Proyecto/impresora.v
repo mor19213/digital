@@ -106,7 +106,7 @@ module impresora(input wire error, color, clk, reset, input wire[0:1]pagina, out
 endmodule
 
 module	senales(input wire prendido, color, escanear, imprimir, input wire[0:1]ajustes_escaner, input wire reset, clk, rellenar_color, rellenar_negro, input wire[0:1]paginas, output wire  esc_escaner, fin_color, fin_negro, output wire[0:6]display1, output wire[0:6]display2);
-	wire	b_escanear, b_imprimir, esc_color, esc_negro, senal_negra, senal_color, senal_contador_n, senal_contador_c, imprimir1_c, imprimir1_n, error1, error2, y_color, y_negro, timerDone;
+	wire	b_escanear, b_imprimir, esc_color, esc_negro, senal_negra, senal_color, senal_contador_n, senal_contador_c, imprimir1_c, imprimir1_n, error1, error2;
 
 
 	antirebote	antirebote_escaner(prendido, escanear, clk, reset, b_escanear);
