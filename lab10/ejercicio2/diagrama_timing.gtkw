@@ -1,0 +1,60 @@
+[*]
+[*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
+[*] Sun Nov  8 01:36:01 2020
+[*]
+[dumpfile] "/Users/danielamorales/Documents/GitHub/digital/lab10/ejercicio2/ejercicio2.vcd"
+[dumpfile_mtime] "Sun Nov  8 00:07:45 2020"
+[dumpfile_size] 5035
+[savefile] "/Users/danielamorales/Documents/GitHub/digital/lab10/ejercicio2/diagrama_timing.gtkw"
+[timestart] 4
+[size] 1650 484
+[pos] -89 -1
+*-3.410963 35 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[treeopen] testbench.i_ejercicio2.
+[sst_width] 193
+[signals_width] 164
+[sst_expanded] 1
+[sst_vpaned_height] 126
+@28
+[color] 2
+testbench.i_ejercicio2.clk
+@22
+[color] 3
+testbench.i_ejercicio2.in_bus1[0:3]
+@28
+[color] 2
+testbench.i_ejercicio2.i_tristate_buffer1.enable
+@22
+testbench.i_ejercicio2.i_tristate_buffer1.y[0:3]
+@28
+[color] 2
+testbench.i_ejercicio2.i_alu.Sel[0:2]
+@23
+testbench.i_ejercicio2.i_alu.b[0:3]
+@22
+testbench.i_ejercicio2.i_alu.a[0:3]
+testbench.i_ejercicio2.i_alu.out[0:3]
+@28
+[color] 5
+testbench.i_ejercicio2.i_alu.c
+[color] 5
+testbench.i_ejercicio2.i_alu.z
+@22
+testbench.i_ejercicio2.i_accumulator.in_alu[0:3]
+testbench.i_ejercicio2.i_accumulator.accu[0:3]
+@28
+[color] 2
+testbench.i_ejercicio2.i_accumulator.enable
+[color] 1
+testbench.i_ejercicio2.i_accumulator.reset
+@22
+testbench.i_ejercicio2.i_tristate_buffer2.a[0:3]
+@28
+[color] 2
+testbench.i_ejercicio2.i_tristate_buffer2.enable
+@22
+[color] 5
+testbench.i_ejercicio2.i_tristate_buffer2.y[0:3]
+[pattern_trace] 1
+[pattern_trace] 0
