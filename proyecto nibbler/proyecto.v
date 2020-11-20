@@ -11,15 +11,15 @@ module pc_counter(
 	always @ (posedge clk, posedge reset) begin
 
 
-		if(reset) begin
+		if(reset) begin		// si reset = 1, el contador se pone en 0
 			count <= 12'b0;
 			end
 
-		else if(enable) begin
+		else if(enable) begin			// si el enable = 1 y reset = 0, el contador cuenta
 		    	count <= count + 1'b1;
 			end
 
-		else if(load) begin
+		else if(load) begin				// si load = 1 y reset = 0;, loadbits pasa a la salida
 			count <= loadbits;
 			end
 	end
@@ -28,12 +28,12 @@ module pc_counter(
 module ROM(
 	input  [11:0] adress,
 	output wire [11:0] data);
-	reg[11:0] memoria [4095:0];
+	reg[11:0] memoria [4095:0];		// matriz de ROM
 
 	initial begin
-		$readmemh("memory_list", memoria);
+		$readmemh("memory_list", memoria);	// llamar archivo con la progra en hexadecimal
 		end
-	assign	data = memoria[adress];
+	assign	data = memoria[adress];		// la salida (data) es igual al valor en la dirección en la entrada
 	endmodule
 
 module RAM (
@@ -45,7 +45,7 @@ module RAM (
 	reg [3:0]salida;
 	reg[3:0] ram [4095:0];
 
-	assign	data = (csRAM && !weRAM) ? salida : 4'bz;
+	assign	data = (csRAM && !weRAM) ? salida : 4'bz;	// si no esta leyendo un dato, esta en z 
 
 	always @ (address or data or weRAM or csRAM)
 	begin
@@ -62,11 +62,11 @@ module RAM (
 module flipflopD(
 	input wire CLK, reset, D, enable, output reg Q);
 
-	always @ (posedge CLK, posedge reset, enable) begin
-		if (reset) begin
+	always @ (posedge CLK, posedge reset, enable) begin	
+		if (reset) begin	// si reset = 1, la salida es 0
 			Q <= 1'b0;
 		end
-		else if (enable) begin
+		else if (enable) begin	// si enable =1, y reset =0, la salida es D
 			Q <= D;
 		end
 	end
@@ -74,7 +74,7 @@ module flipflopD(
 
 module fetch(input wire clk, reset, enable, input wire [7:0]prog_byte, output wire [3:0]instr, output wire [3:0]oprnd);
 
-	flipflopD ff1(clk, reset, prog_byte[7], enable, instr[3]);
+	flipflopD ff1(clk, reset, prog_byte[7], enable, instr[3]);		// flipflop de 8 bits
 	flipflopD ff2(clk, reset, prog_byte[6], enable, instr[2]);
 	flipflopD ff3(clk, reset, prog_byte[5], enable, instr[1]);
 	flipflopD ff4(clk, reset, prog_byte[4], enable, instr[0]);
@@ -87,7 +87,7 @@ module fetch(input wire clk, reset, enable, input wire [7:0]prog_byte, output wi
 
 //bus drivers e inputs
 module tristate_buffer(input wire enable, input wire [3:0]a, output wire [3:0]y);
-		assign y= enable ? a : 4'bz;	
+		assign y= enable ? a : 4'bz;		// si enable = 0, la salida es z y si enable = 1, la salida es a
 		endmodule
 
 module alu(
@@ -122,7 +122,7 @@ module alu(
 		        case(Sel)
 		        0:					//	pasar A
 					out = out1[3:0];
-				1:					//	comparador, restar
+				1:					//	comparador, el valor no es alterado
 					out = out[3:0];
 				2:					//	pasar b, lit
 					out = out1[3:0];
@@ -135,7 +135,7 @@ module alu(
 					out = 4'bz;
 				endcase
 
-				case (Sel)
+				case (Sel)		// c es el 4 bit de out1
 			    0:          //  pasar A
 			      c = 0;
 			    1:          //  comparador, restar
@@ -153,14 +153,13 @@ module alu(
 
 			    end
 
-		    assign  z = ~out1[0] & ~out1[1] & ~out1[2] & ~out1[3];
+		    assign  z = ~out1[0] & ~out1[1] & ~out1[2] & ~out1[3];		// bandera z
 			endmodule
 
 //accumulator y outputs
 module flipflopD4(input wire clk, reset, enable, input wire [3:0]in, output wire [3:0]out);
 
-
-
+	//	flipflop de 4 bits
 	flipflopD i_flipflopD1 (.CLK(clk), .reset(reset), .D(in[0]), .enable(enable), .Q(out[0]));
 	flipflopD i_flipflopD2 (.CLK(clk), .reset(reset), .D(in[1]), .enable(enable), .Q(out[1]));
 	flipflopD i_flipflopD3 (.CLK(clk), .reset(reset), .D(in[2]), .enable(enable), .Q(out[2]));
@@ -177,7 +176,7 @@ module decode(
 	);
 
 	wire	[6:0]algo;
-
+										//	union de los bits de entrada en un solo wire
 	assign	algo[6:3] = instr[3:0];
 	assign	algo[2] = c;
 	assign	algo[1] = z;
@@ -222,8 +221,8 @@ module decode(
 		endcase
 	endmodule
 
-module phase(input wire clk, reset, enable, output wire q);
-	wire d;
+module phase(input wire clk, reset, enable, output wire q);	// phase, 2 veces el periodo del clock
+	wire d;		
 	assign d = ~q;
 	flipflopD f1(clk, reset, d, enable, q);
 	endmodule
@@ -237,7 +236,7 @@ module flags (
 	output	[1:0]Q
 	);
 
-	flipflopD i_flipflopDc (.CLK(clk), .reset(reset), .D(c), .enable(enable), .Q(Q[0]));
+	flipflopD i_flipflopDc (.CLK(clk), .reset(reset), .D(c), .enable(enable), .Q(Q[0]));	// 1 ff por bandera
 	flipflopD i_flipflopDz (.CLK(clk), .reset(reset), .D(z), .enable(enable), .Q(Q[1]));
 	endmodule
 
@@ -246,6 +245,7 @@ module control(input clk, reset, c, z, enable_flags, enable_phase, phase, input 
 	assign	flag_z = Q[1];
 	assign	flag_c = Q[0];
 
+	// salida de phase y flags es input del decode
 	phase i_phase (.clk(clk), .reset(reset), .enable(enable_phase), .q(phase));
 	flags i_flags (.clk(clk), .reset(reset), .enable(enable_flags), .c(c), .z(z), .Q(Q));
 	decode i_decode (.c(Q[0]), .z(Q[1]), .phase(phase), .instr(instr), .control(control));
@@ -277,9 +277,11 @@ module ej1_2 (
 
 	wire [11:0] loadbits;
 
+	// unir oprnd y program byte para la entrada a la ram y pc
 	assign	loadbits[11:8] = oprnd[3:0];
 	assign	loadbits[7:0] = data[7:0];
 
+	// salida del pc es la entrada de la rom, la salida de la rom entra al fetch 
 	pc_counter i_pc_counter (
 		.clk(clk), 
 		.reset(reset), 
@@ -300,10 +302,12 @@ module ej1_2 (
 		.instr    (instr),
 		.oprnd    (oprnd)
 				);
+	// buffer del oprnd
 	tristate_buffer i_tristate_buffer1	(	.enable(bus1_en), 
 											.a(oprnd), 
 											.y(out_bus1)
 											);
+	// data bus y la salida de la accu son entradas de la alu
 	alu 			i_alu 				(	.a(out_accu), 
 											.b(out_bus1), 
 											.Sel(Sel), 
@@ -311,12 +315,14 @@ module ej1_2 (
 											.z(z), 
 											.out(out_alu)
 											);
+	// la salida de la alu es la entrada de la accu
 	flipflopD4 	i_accumulator 		(	.clk(clk), 
 											.reset(reset_accu), 
 											.enable(accu_en), 
 											.in(out_alu), 
 											.out(out_accu)
 											);
+	// la salida de la alu va a out
 	tristate_buffer i_tristate_buffer2 	(	.enable(bus2_en), 
 											.a(out_alu), 
 											.y(y)
@@ -338,6 +344,7 @@ module uP (
 	wire [12:0] control;
 	wire	loadA,	loadPC, loadFlags, csRAM, weRAM, oeALU, oeIN, oeOprnd, loadOut, c, z;
 
+	// separar las señales de control, según a que modulo van
 	assign	incPC 	= control[12];
 	assign	loadPC 	= control[11];
 	assign	loadA 	= control[10];
@@ -351,6 +358,7 @@ module uP (
 	assign	loadOut = control[0];
 
 	assign	f_phase = ~phase;
+
 
 	ej1_2 i_ej1_2 (
 		.clk       (clock    		),
@@ -366,10 +374,10 @@ module uP (
 		.data      (program_byte 	),
 		.instr     (instr 			),
 		.oprnd     (oprnd 			),
-		.c         (c 			),
+		.c         (c 			),				// banderas para la entrada de flags
 		.z         (z 			),
 		.out       (data_bus 		),			//salida del bus 2, salida ALU
-		.out_bus1  (data_bus		),
+		.out_bus1  (data_bus		),			// las salidas de los buffer van al data bus
 		.out_accu  (accu 			),
 		.address 	(PC 			)
 		);
@@ -378,25 +386,28 @@ module uP (
 		.clk         (clock         ),
 		.reset       (reset       	),
 		.c           (c         	),
-		.z           (z      ),
+		.z           (z      ),					// entrada de flags
 		.enable_flags(loadFlags ),
-		.enable_phase(1'b1 		),
+		.enable_phase(1'b1 		),				// phase siempre habilitado
 		.phase       (phase       ),
 		.instr       (instr       ),
 		.control     (control     ),
-		.flag_c		 (c_flag),
+		.flag_c		 (c_flag),					// output flags
 		.flag_z		 (z_flag)
 			);
 
 
-	assign	address_RAM[11:8] = oprnd;
+	assign	address_RAM[11:8] = oprnd;			// asignar addres_Ram concatenando oprdn y program byte
 	assign	address_RAM[7:0] = program_byte;
-	RAM i_RAM (.weRAM(weRAM), .csRAM(csRAM), .address(address_RAM), .data(data_bus));
+
+	RAM i_RAM (.weRAM(weRAM), .csRAM(csRAM), .address(address_RAM), .data(data_bus)); 
+		// la salida de la ram también va data buss
 
 	flipflopD4 i_flipflopD4 (.clk(clk), .reset(reset), .enable(loadOut), .in(data_bus), .out(FF_out));
+		// ff tipo d para los outputs y la entrada es data bus
 
 	tristate_buffer i_tristate_buffer (.enable(oeIN), .a(pushbuttons), .y(data_bus));
-
+		// buffer para los inputs
 
 	endmodule
 
