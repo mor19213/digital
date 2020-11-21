@@ -27,7 +27,7 @@ module pc_counter(
 
 module ROM(
 	input  [11:0] adress,
-	output wire [11:0] data);
+	output wire [7:0] data);
 	reg[11:0] memoria [4095:0];		// matriz de ROM
 
 	initial begin
